@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCHIZZO OFFICIAL | UNDERGROUND</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap');
+
+        :root {
+            --bg: #0a0a0a;
+            --primary: #ffffff;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--primary);
+            font-family: 'Archivo Black', sans-serif;
+            overflow-x: hidden;
+            margin: 0;
+        }
+
+        /* The "Schizzo" Grainy Look */
+        .grain-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 99;
+        }
+
+        .outline-text {
+            -webkit-text-stroke: 1px white;
+            color: transparent;
+        }
+
+        .marquee {
+            display: flex;
+            white-space: nowrap;
+            font-size: 15vw;
+            line-height: 1;
+            padding: 20px 0;
+        }
+
+        .sketch-border {
+            border: 4px solid white;
+            box-shadow: 10px 10px 0px white;
+            transition: all 0.2s ease;
+        }
+
+        .sketch-border:hover {
+            transform: translate(-5px, -5px);
+            box-shadow: 20px 20px 0px white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="grain-overlay"></div>
+
+    <nav class="fixed top-0 w-full z-[100] p-6 flex justify-between items-center mix-blend-difference">
+        <div class="text-2xl font-bold tracking-tighter">SCHIZZO</div>
+        <div class="text-xs border-2 border-white px-2 py-1 uppercase font-bold tracking-widest">Live Archive</div>
+    </nav>
+
+    <main>
+        <section class="min-h-screen flex flex-col justify-center items-center relative p-4">
+            <h1 class="text-[20vw] leading-[0.8] italic uppercase text-center hero-title">
+                DIGITAL<br><span class="outline-text">CHAOS</span>
+            </h1>
+            
+            <div class="absolute bottom-10 left-10 max-w-xs uppercase text-[10px] tracking-widest leading-relaxed">
+                Visualizing the underground scene through brutalist aesthetics and motion distortion.
+            </div>
+        </section>
+
+        <section class="p-6 md:p-20 grid grid-cols-1 md:grid-cols-2 gap-20">
+            <div class="sketch-border h-96 overflow-hidden relative group">
+                <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000" class="w-full h-full object-cover grayscale contrast-125 group-hover:scale-110 transition-transform duration-700">
+                <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity"></div>
+            </div>
+
+            <div class="flex flex-col justify-center">
+                <h2 class="text-6xl mb-6">RAW TEXTURE</h2>
+                <p class="font-sans font-light text-zinc-400">Schizzo Official is not just a brand; it is an experimental playground for acid graphics and kinetic typography.</p>
+                <button class="mt-8 bg-white text-black px-6 py-3 font-bold hover:bg-zinc-300 transition-colors">ENTER LAB</button>
+            </div>
+        </section>
+
+        <section class="bg-white text-black my-40 overflow-hidden">
+            <div class="marquee" id="marquee">
+                <span> SCHIZZO SCHIZZO SCHIZZO SCHIZZO SCHIZZO SCHIZZO </span>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Animations
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Hero Parallax
+        gsap.to(".hero-title", {
+            scrollTrigger: {
+                trigger: "body",
+                start: "top top",
+                end: "bottom top",
+                scrub: true
+            },
+            y: 300,
+            opacity: 0
+        });
+
+        // Marquee Movement
+        gsap.to("#marquee", {
+            xPercent: -50,
+            repeat: -1,
+            duration: 5,
+            ease: "linear"
+        });
+
+        // Hover Effect Logic for "Crazy" feel
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 20;
+            const y = (e.clientY / window.innerHeight - 0.5) * 20;
+            gsap.to(".hero-title", { x: x, y: y, duration: 0.5 });
+        });
+    </script>
+</body>
+</html>
