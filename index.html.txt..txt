@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCHIZZO | DIGITAL CHAOS</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap');
+
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* Grainy Texture Overlay */
+        .noise {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            opacity: 0.07;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* Custom Invert Cursor */
+        #cursor {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            mix-blend-mode: difference;
+            pointer-events: none;
+            z-index: 10000;
+            transition: transform 0.1s ease;
+        }
+
+        .text-outline {
+            -webkit-text-stroke: 1px white;
+            color: transparent;
+        }
+
+        .glitch-image {
+            filter: grayscale(100%) contrast(150%);
+            transition: all 0.3s ease;
+        }
+
+        .glitch-image:hover {
+            filter: invert(100%) grayscale(0%);
+            transform: scale(1.05) rotate(-2deg);
+        }
+
+        /* Marquee speed */
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .marquee-inner {
+            display: flex;
+            width: 200%;
+            animation: marquee 10s linear infinite;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="noise"></div>
+    <div id="cursor"></div>
+
+    <nav class="fixed top-0 w-full p-8 flex justify-between items-center z-50 mix-blend-difference">
+        <div class="text-2xl font-black italic tracking-tighter">SCHIZZO®</div>
+        <div class="space-x-6 text-xs font-bold uppercase tracking-widest">
+            <a href="#" class="hover:line-through">Lab</a>
+            <a href="#" class="hover:line-through">Shop</a>
+            <a href="#" class="hover:line-through">Index</a>
+        </div>
+    </nav>
+
+    <section class="h-screen flex flex-col justify-center items-center relative">
+        <h1 id="hero-text" class="text-[18vw] leading-[0.8] font-black uppercase italic text-center tracking-tighter">
+            DIGITAL<br><span class="text-outline">CHAOS</span>
+        </h1>
+        
+        <div class="absolute top-[20%] right-[10%] w-48 h-64 border-2 border-white overflow-hidden shadow-2xl rotate-12 floating">
+            <img src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=500" class="w-full h-full object-cover glitch-image">
+        </div>
+    </section>
+
+    <section class="p-6 md:p-20 grid grid-cols-1 md:grid-cols-12 gap-10">
+        <div class="md:col-span-8 bg-zinc-900 p-10 border-l-8 border-white skew-box">
+            <h2 class="text-6xl font-black uppercase leading-none mb-6">Visual<br>Distortion</h2>
+            <p class="uppercase text-gray-400 text-sm tracking-widest max-w-sm">
+                Inspired by underground techno culture and acid graphics. A push against the clean, boring web.
+            </p>
+        </div>
+
+        <div class="md:col-span-4 mt-20">
+            <div class="w-full h-80 bg-white text-black p-6 flex flex-col justify-between italic">
+                <span class="font-black text-4xl">001</span>
+                <span class="font-black text-7xl self-end">RAW</span>
+            </div>
+        </div>
+    </section>
+
+    <div class="bg-white text-black py-10 mt-20 overflow-hidden">
+        <div class="marquee-inner">
+            <div class="text-[12vw] font-black uppercase leading-none px-4">SCHIZZO — STAY CRAZY — </div>
+            <div class="text-[12vw] font-black uppercase leading-none px-4">SCHIZZO — STAY CRAZY — </div>
+        </div>
+    </div>
+
+    <script>
+        // Custom Cursor
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', (e) => {
+            gsap.to(cursor, {
+                x: e.clientX - 20,
+                y: e.clientY - 20,
+                duration: 0.1
+            });
+        });
+
+        // Register GSAP ScrollTrigger
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Skew effect on scroll
+        let proxy = { skew: 0 },
+            skewSetter = gsap.quickSetter(".skew-box", "skewY", "deg"),
+            clamp = gsap.utils.clamp(-20, 20); 
+
+        ScrollTrigger.create({
+            onUpdate: (self) => {
+                let skew = clamp(self.getVelocity() / -300);
+                if (Math.abs(skew) > Math.abs(proxy.skew)) {
+                    proxy.skew = skew;
+                    gsap.to(proxy, {skew: 0, duration: 0.8, ease: "power3", overwrite: true, onUpdate: () => skewSetter(proxy.skew)});
+                }
+            }
+        });
+
+        // Hero text parallax
+        gsap.to("#hero-text", {
+            scrollTrigger: {
+                trigger: "body",
+                start: "top top",
+                end: "bottom top",
+                scrub: true
+            },
+            y: 200,
+            scale: 1.1,
+            rotation: 5
+        });
+
+        // Make floating images move slightly on scroll
+        gsap.to(".floating", {
+            scrollTrigger: {
+                scrub: 1
+            },
+            y: -150,
+            rotation: -10
+        });
+    </script>
+</body>
+</html>
